@@ -20,6 +20,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
@@ -29,16 +31,20 @@ import coil.compose.AsyncImage
 import com.nextory.testapp.R
 import com.nextory.testapp.data.Book
 import com.nextory.testapp.ui.components.ListItem
+import com.nextory.testapp.ui.components.PreviewBookProvider
 import com.nextory.testapp.ui.utils.rememberFlowWithLifecycle
 
+// FIXME save / restore state on configuration and system kill
 @Composable
 fun BookList(
-    bookListViewModel: BookListViewModel = hiltViewModel()
+    bookListViewModel: BookListViewModel = hiltViewModel(),
+    showDetail: (Long) -> Unit
 ) {
     val pagedBooks = rememberFlowWithLifecycle(bookListViewModel.pagedBooks)
         .collectAsLazyPagingItems()
     BookList(
         pagedBooks = pagedBooks,
+        onItemClicked = showDetail,
         onSearchTextChanged = {
         }
     )
@@ -52,6 +58,7 @@ fun BookList(
 @Composable
 private fun BookList(
     pagedBooks: LazyPagingItems<Book>,
+    onItemClicked: (Long) -> Unit,
     onSearchTextChanged: (String) -> Unit = {}
 ) {
     Scaffold(topBar = { BookListTopBar() }) { paddingValues ->
@@ -98,7 +105,7 @@ private fun BookList(
             }
 
             items(pagedBooks) { book ->
-                BookItem(book = book!!)
+                BookItem(book = book!!, onItemClicked = onItemClicked)
             }
         }
     }
@@ -117,9 +124,11 @@ private fun BookListTopBar() {
 }
 
 @Composable
-private fun BookItem(book: Book) {
+private fun BookItem(book: Book, onItemClicked: (Long) -> Unit) {
     ListItem(
-        modifier = Modifier.clickable { },
+        modifier = Modifier.clickable {
+              onItemClicked(book.id)
+        },
         icon = {
             AsyncImage(
                 model = book.imageUrl,
@@ -133,4 +142,10 @@ private fun BookItem(book: Book) {
     ) {
         Text(book.title)
     }
+}
+
+@Preview
+@Composable
+private fun PreviewBookItem(@PreviewParameter(PreviewBookProvider::class) book: Book?){
+    BookItem(book!!) {}
 }
