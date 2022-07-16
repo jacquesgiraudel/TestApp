@@ -11,7 +11,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +36,9 @@ import com.nextory.testapp.ui.components.FavoriteToggleButton
 import com.nextory.testapp.ui.components.ListItem
 import com.nextory.testapp.ui.components.PreviewBookProvider
 import com.nextory.testapp.ui.utils.rememberFlowWithLifecycle
+import com.nextory.testapp.ui.utils.rememberStateWithLifecycle
 
-// FIXME save / restore state on configuration and system kill
+// FIXME save / restore scroll position on system kill
 @Composable
 fun BookList(
     bookListViewModel: BookListViewModel = hiltViewModel(),
@@ -43,10 +46,14 @@ fun BookList(
 ) {
     val pagedBooks = rememberFlowWithLifecycle(bookListViewModel.pagedBooks)
         .collectAsLazyPagingItems()
+    val searchText by rememberStateWithLifecycle(bookListViewModel.searchedText)
+
     BookList(
         pagedBooks = pagedBooks,
         onItemClicked = showDetail,
+        searchText,
         onSearchTextChanged = {
+            bookListViewModel.searchText(it)
         }
     )
 }
@@ -60,6 +67,7 @@ fun BookList(
 private fun BookList(
     pagedBooks: LazyPagingItems<Book>,
     onItemClicked: (Long) -> Unit,
+    searchText: String,
     onSearchTextChanged: (String) -> Unit = {}
 ) {
     Scaffold(topBar = { BookListTopBar() }) { paddingValues ->
@@ -70,7 +78,6 @@ private fun BookList(
                 .asPaddingValues()
         ) {
             stickyHeader {
-                var searchText by remember { mutableStateOf("") }
                 val keyboardController = LocalSoftwareKeyboardController.current!!
                 val focusRequester = remember { FocusRequester() }
                 OutlinedTextField(
@@ -79,7 +86,6 @@ private fun BookList(
                         .focusRequester(focusRequester),
                     value = searchText,
                     onValueChange = {
-                        searchText = it
                         onSearchTextChanged(it)
                     },
                     placeholder = {
@@ -87,7 +93,7 @@ private fun BookList(
                     },
                     trailingIcon = {
                         AnimatedVisibility(visible = searchText.isNotEmpty()) {
-                            IconButton(onClick = { searchText = "" }) {
+                            IconButton(onClick = { onSearchTextChanged("") }) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
                                     contentDescription = stringResource(R.string.search_reset)
@@ -128,7 +134,7 @@ private fun BookListTopBar() {
 private fun BookItem(book: Book, onItemClicked: (Long) -> Unit) {
     ListItem(
         modifier = Modifier.clickable {
-              onItemClicked(book.id)
+            onItemClicked(book.id)
         },
         icon = {
             AsyncImage(
@@ -151,6 +157,6 @@ private fun BookItem(book: Book, onItemClicked: (Long) -> Unit) {
 
 @Preview
 @Composable
-private fun PreviewBookItem(@PreviewParameter(PreviewBookProvider::class) book: Book?){
+private fun PreviewBookItem(@PreviewParameter(PreviewBookProvider::class) book: Book?) {
     BookItem(book!!) {}
 }

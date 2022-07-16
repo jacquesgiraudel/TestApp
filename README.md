@@ -12,3 +12,7 @@
 
 - as the database is local and there is not user management, I just added a favorite column to the book table
 - added a migration specification for the database
+
+## Problem 3: search
+
+- branched the list flow to a search flow to be able to relaunch emission when the search text changes

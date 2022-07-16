@@ -25,7 +25,6 @@ import com.nextory.testapp.data.Book
 import com.nextory.testapp.ui.components.FavoriteToggleButton
 import com.nextory.testapp.ui.components.PreviewBookProvider
 
-// FIXME save / restore state on configuration and system kill
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetail(bookId: Long, bookDetailViewModel: BookDetailViewModel = hiltViewModel()) {
