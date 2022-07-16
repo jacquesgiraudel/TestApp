@@ -38,7 +38,7 @@ import com.nextory.testapp.ui.components.PreviewBookProvider
 import com.nextory.testapp.ui.utils.rememberFlowWithLifecycle
 import com.nextory.testapp.ui.utils.rememberStateWithLifecycle
 
-// FIXME save / restore scroll position on system kill
+// FIXME save / restore scroll position on configuration change / system kill
 @Composable
 fun BookList(
     bookListViewModel: BookListViewModel = hiltViewModel(),
