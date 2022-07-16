@@ -30,6 +30,7 @@ import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.nextory.testapp.R
 import com.nextory.testapp.data.Book
+import com.nextory.testapp.ui.components.FavoriteToggleButton
 import com.nextory.testapp.ui.components.ListItem
 import com.nextory.testapp.ui.components.PreviewBookProvider
 import com.nextory.testapp.ui.utils.rememberFlowWithLifecycle
@@ -89,7 +90,7 @@ private fun BookList(
                             IconButton(onClick = { searchText = "" }) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
-                                    contentDescription = null
+                                    contentDescription = stringResource(R.string.search_reset)
                                 )
                             }
                         }
@@ -132,13 +133,17 @@ private fun BookItem(book: Book, onItemClicked: (Long) -> Unit) {
         icon = {
             AsyncImage(
                 model = book.imageUrl,
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.bookdetail_coverpage),
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(8.dp))
             )
         },
-        secondaryText = { Text(book.author) }
+        secondaryText = { Text(book.author) },
+        trailing = {
+            Box(modifier = Modifier.size(32.dp))
+            FavoriteToggleButton(favorite = book.favorite)
+        }
     ) {
         Text(book.title)
     }

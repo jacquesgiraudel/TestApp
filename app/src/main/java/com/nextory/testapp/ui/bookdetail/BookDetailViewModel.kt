@@ -21,11 +21,18 @@ class BookDetailViewModel @Inject constructor(
     )
     val book: StateFlow<Book?> = _book
 
-    fun getBook(id: Long){
+    fun getBook(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            bookRepository.getBook(id).collect {
-                book -> _book.value = book
+            bookRepository.getBook(id).collect { book ->
+                _book.value = book
             }
+        }
+    }
+
+    fun toggleFavorite() {
+        val updatedBook = book.value!!.copy(favorite = !book.value!!.favorite)
+        viewModelScope.launch(Dispatchers.IO) {
+            bookRepository.updateBook(updatedBook)
         }
     }
 }

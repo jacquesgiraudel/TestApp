@@ -5,6 +5,6 @@ import com.nextory.testapp.data.Book
 
 class PreviewBookProvider : PreviewParameterProvider<Book> {
     override val values = sequenceOf(
-        Book(1, "title", "author", "description", "")
+        Book(1, "title", "author", "description", "", false)
     )
 }

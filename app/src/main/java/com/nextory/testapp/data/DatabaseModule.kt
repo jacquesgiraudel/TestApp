@@ -24,6 +24,7 @@ object DatabaseModule {
         DATABASE_NAME
     )
         .createFromAsset("test.db")
+        .addMigrations(MIGRATION_1_2)
         .build()
 
     @Provides

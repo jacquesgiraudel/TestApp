@@ -65,6 +65,9 @@ private val LightColorScheme = lightColorScheme(
     outline = BlueGrey50
 )
 
+val ColorScheme.favorite: Color
+    get() = Yellow90
+
 @Composable
 fun TestAppTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),

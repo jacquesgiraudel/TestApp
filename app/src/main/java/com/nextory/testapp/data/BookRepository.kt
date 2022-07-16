@@ -4,7 +4,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class BookRepository @Inject constructor(
@@ -16,7 +15,11 @@ class BookRepository @Inject constructor(
         }.flow
     }
 
-    fun getBook(id: Long): Flow<Book>{
-        return flowOf(bookDao.getBook(id))
+    fun getBook(id: Long): Flow<Book> {
+        return bookDao.getBook(id)
+    }
+
+    fun updateBook(book: Book): Int {
+        return bookDao.updateBook(book)
     }
 }
