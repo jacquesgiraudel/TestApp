@@ -12,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -35,8 +35,6 @@ import com.nextory.testapp.data.Book
 import com.nextory.testapp.ui.components.FavoriteToggleButton
 import com.nextory.testapp.ui.components.ListItem
 import com.nextory.testapp.ui.components.PreviewBookProvider
-import com.nextory.testapp.ui.utils.rememberFlowWithLifecycle
-import com.nextory.testapp.ui.utils.rememberStateWithLifecycle
 
 // FIXME save / restore scroll position on configuration change / system kill
 @Composable
@@ -44,9 +42,9 @@ fun BookList(
     bookListViewModel: BookListViewModel = hiltViewModel(),
     showDetail: (Long) -> Unit
 ) {
-    val pagedBooks = rememberFlowWithLifecycle(bookListViewModel.pagedBooks)
-        .collectAsLazyPagingItems()
-    val searchText by rememberStateWithLifecycle(bookListViewModel.searchedText)
+
+    val pagedBooks = bookListViewModel.pagedBooks.collectAsLazyPagingItems()
+    val searchText = bookListViewModel.searchedText.collectAsState().value
 
     BookList(
         pagedBooks = pagedBooks,

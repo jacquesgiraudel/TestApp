@@ -6,10 +6,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.filter
 import com.nextory.testapp.data.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
 
@@ -30,7 +28,7 @@ class BookListViewModel @Inject constructor(
                 ).contains(searchText)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     fun searchText(text: String) {
         _searchedText.value = text.lowercase(Locale.getDefault())

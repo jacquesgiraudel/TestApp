@@ -7,10 +7,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,22 +29,19 @@ import com.nextory.testapp.ui.components.PreviewBookProvider
 @Composable
 fun BookDetail(bookId: Long, bookDetailViewModel: BookDetailViewModel = hiltViewModel()) {
 
-    LaunchedEffect(null) {
-        bookDetailViewModel.getBook(bookId)
-    }
-    val book = bookDetailViewModel.book.collectAsState().value
+    val book by bookDetailViewModel.getBook(bookId).collectAsState(null)
 
-    val toggleFavorite: () -> Unit = {
-        bookDetailViewModel.toggleFavorite()
+    val toggleFavorite: (Boolean) -> Unit = {
+        bookDetailViewModel.toggleFavorite(bookId, it)
     }
 
     if (book != null) {
-        Book(book, toggleFavorite)
+        Book(book!!, toggleFavorite)
     }
 }
 
 @Composable
-private fun Book(book: Book, toggleFavorite: () -> Unit) {
+private fun Book(book: Book, toggleFavorite: (Boolean) -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -77,7 +74,7 @@ private fun Book(book: Book, toggleFavorite: () -> Unit) {
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                FavoriteToggleButton(favorite = book.favorite, toggleFavorite)
+                FavoriteToggleButton(favorite = book.favorite) { toggleFavorite(!book.favorite) }
             }
         }
 

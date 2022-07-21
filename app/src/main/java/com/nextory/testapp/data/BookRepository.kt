@@ -19,7 +19,7 @@ class BookRepository @Inject constructor(
         return bookDao.getBook(id)
     }
 
-    fun updateBook(book: Book): Int {
-        return bookDao.updateBook(book)
+    fun updateBook(id: Long, favorite:Boolean) {
+        return bookDao.updateBook(id, favorite)
     }
 }

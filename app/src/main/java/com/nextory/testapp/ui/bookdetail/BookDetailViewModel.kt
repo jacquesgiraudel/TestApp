@@ -6,8 +6,8 @@ import com.nextory.testapp.data.Book
 import com.nextory.testapp.data.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,23 +16,13 @@ class BookDetailViewModel @Inject constructor(
     private val bookRepository: BookRepository
 ) : ViewModel() {
 
-    private val _book: MutableStateFlow<Book?> = MutableStateFlow(
-        null
-    )
-    val book: StateFlow<Book?> = _book
-
-    fun getBook(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            bookRepository.getBook(id).collect { book ->
-                _book.value = book
-            }
-        }
+    fun getBook(id: Long): Flow<Book> {
+        return bookRepository.getBook(id).flowOn(Dispatchers.IO)
     }
 
-    fun toggleFavorite() {
-        val updatedBook = book.value!!.copy(favorite = !book.value!!.favorite)
+    fun toggleFavorite(id: Long, favorite: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            bookRepository.updateBook(updatedBook)
+            bookRepository.updateBook(id, favorite)
         }
     }
 }
